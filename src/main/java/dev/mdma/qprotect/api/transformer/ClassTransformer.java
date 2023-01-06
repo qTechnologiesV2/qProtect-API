@@ -1,7 +1,6 @@
 package dev.mdma.qprotect.api.transformer;
 
 import dev.mdma.qprotect.api.jar.JarFile;
-import dev.mdma.qprotect.api.transformer.exclusions.ExclusionType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -50,13 +49,6 @@ public abstract class ClassTransformer extends TransformerHelper
      * @throws TransformException if an error occurs
      */
     public abstract boolean runOnClass(String className, ClassNode classNode, JarFile jarFile) throws TransformException;
-
-    /**
-     * What exclusion type should this transformer use?
-     *
-     * @return the exclusion type
-     */
-    public abstract ExclusionType getExclusionType();
 
     /**
      * @return the amount of transformations made

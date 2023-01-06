@@ -1,7 +1,7 @@
 package dev.mdma.qprotect.api.transformer;
 
 import dev.mdma.qprotect.api.jar.JarFile;
-import dev.mdma.qprotect.api.transformer.exclusions.ExclusionType;
+
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
@@ -22,6 +22,4 @@ public abstract class MethodTransformer extends ClassTransformer {
     }
 
     public abstract boolean runOnMethod(ClassNode ownerClass, MethodNode methodNode, JarFile jarFile) throws TransformException;
-
-    public abstract ExclusionType getExclusionType();
 }

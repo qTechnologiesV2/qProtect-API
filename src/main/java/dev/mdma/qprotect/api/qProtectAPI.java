@@ -4,7 +4,6 @@ import dev.mdma.qprotect.api.asm.hierachy.Hierarchy;
 import dev.mdma.qprotect.api.jar.classpools.ClassPool;
 import dev.mdma.qprotect.api.transformer.ClassTransformer;
 import dev.mdma.qprotect.api.transformer.Transformer;
-import dev.mdma.qprotect.api.transformer.exclusions.ExclusionType;
 import org.objectweb.asm.tree.ClassNode;
 
 import java.util.List;
@@ -26,6 +25,8 @@ public interface qProtectAPI {
      * @return List of classTransformers
      */
     List<ClassTransformer> getClassTransformers();
+
+    List<ClassTransformer> getCustomTransformers();
 
     /**
      * Registers a transformer
@@ -79,13 +80,13 @@ public interface qProtectAPI {
      * Check If class is excluded
      * @return true if class excluded
      */
-    boolean isExcluded(ClassNode classNode, ExclusionType exclusionType);
+    boolean isExcluded(ClassNode classNode, String exclusionType);
 
     /**
      * Check If class is included
      * @return true if class included
      */
-    boolean isIncluded(ClassNode classNode, ExclusionType exclusionType);
+    boolean isIncluded(ClassNode classNode, String exclusionType);
 
     /**
      * Check If class is included globally

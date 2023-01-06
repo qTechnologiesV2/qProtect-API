@@ -6,7 +6,7 @@
 
     <groupId>dev.mdma.qprotect</groupId>
     <artifactId>qprotect-api</artifactId>
-    <version>1.9.2</version>
+    <version>1.9.4</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
