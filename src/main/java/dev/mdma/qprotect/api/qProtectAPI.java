@@ -1,12 +1,17 @@
 package dev.mdma.qprotect.api;
 
 import dev.mdma.qprotect.api.asm.hierachy.Hierarchy;
+import dev.mdma.qprotect.api.jar.ResourceEntry;
 import dev.mdma.qprotect.api.jar.classpools.ClassPool;
 import dev.mdma.qprotect.api.transformer.ClassTransformer;
+import dev.mdma.qprotect.api.transformer.RenamerTransformer;
 import dev.mdma.qprotect.api.transformer.Transformer;
 import org.objectweb.asm.tree.ClassNode;
 
+import java.io.File;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public interface qProtectAPI {
     /**
@@ -25,8 +30,6 @@ public interface qProtectAPI {
      * @return List of classTransformers
      */
     List<ClassTransformer> getClassTransformers();
-
-    List<ClassTransformer> getCustomTransformers();
 
     /**
      * Registers a transformer
@@ -64,11 +67,18 @@ public interface qProtectAPI {
      */
     Hierarchy getHierarchy();
 
+
     /**
      * Gets all of our classes through the ClassPool
      * @return ClassPool instance of all loaded ClassNodes
      */
     ClassPool<? extends ClassNode> getClassPool();
+
+    /**
+     * Gets all of our classes through the ClassPool
+     * @return ClassPool instance of all excluded ClassNodes
+     */
+    ClassPool<? extends ClassNode> getExcludedClassPool();
 
     /**
      * gets the current API version
@@ -83,6 +93,22 @@ public interface qProtectAPI {
     boolean isExcluded(ClassNode classNode, String exclusionType);
 
     /**
+     * Push a class to Exclusions
+     */
+    void addExclusion(String transformerName, String classToExclude);
+
+    /**
+     * Remove a class from Exclusions
+     */
+    void removeExclusion(String transformerName, String excludedClass);
+
+    /**
+     * Gets a List of all exclusions
+     * @return List<String>
+     */
+    List<String> getExclusions();
+
+    /**
      * Check If class is included
      * @return true if class included
      */
@@ -94,11 +120,49 @@ public interface qProtectAPI {
      */
     boolean isIncluded(ClassNode classNode);
 
+    /**
+     * Push a class to Exclusions
+     */
+    void addInclusion(String transformerName, String classToInclude);
+
+    /**
+     * Remove a class from Exclusions
+     */
+    void removeInclusion(String transformerName, String includedClass);
+
+    /**
+     * Gets a List of all inclusions
+     * @return List<String>
+     */
+    List<String> getInclusions();
+
+
+    /**
+     * Sends an error to qprotect-core if a classNode is missing in the dependencies
+     */
     void setMissingDependencies();
 
+    /**
+     * Puts a classNode to the dependency classPool
+     */
     void putToDependencies(String className, ClassNode classNode);
 
-    static class Factory {
+    /**
+     * Gets the bootstrapClassNode from the Processor
+     *  @return classNode
+     */
+    ClassNode getBootstrapClassNode();
+
+    /**
+     * Gets the input or output from the Processor
+     *  @return File
+     */
+    File getInputFile();
+    File getOutputFile();
+
+    Collection<ResourceEntry<byte[]>> getResources();
+
+    class Factory {
         private static qProtectAPI api;
 
         public static qProtectAPI getAPI() {

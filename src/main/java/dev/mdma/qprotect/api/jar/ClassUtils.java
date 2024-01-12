@@ -1,10 +1,10 @@
 package dev.mdma.qprotect.api.jar;
 
+import java.util.Arrays;
+
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
-
-import java.util.Arrays;
 
 /**
  * @author Cg.

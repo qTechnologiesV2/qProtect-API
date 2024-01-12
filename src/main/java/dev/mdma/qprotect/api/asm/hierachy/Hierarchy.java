@@ -1,9 +1,10 @@
 package dev.mdma.qprotect.api.asm.hierachy;
 
-import dev.mdma.qprotect.api.exception.qProtectException;
 import dev.mdma.qprotect.api.qProtectAPI;
+import dev.mdma.qprotect.api.utils.BytecodeUtils;
 import lombok.SneakyThrows;
 import org.objectweb.asm.tree.ClassNode;
+import org.tinylog.Logger;
 
 import java.util.*;
 
@@ -23,7 +24,8 @@ public class Hierarchy {
         if (!this.classes.containsKey(string)) {
             if (!this.dependencies.containsKey(string)) {
                 api.setMissingDependencies();
-                throw new qProtectException("Could not find " + string + " in classpath!");
+                Logger.error("Could not find " + string + " in classpath!");
+                return BytecodeUtils.createClassNode(string);
             } else {
                 return this.dependencies.get(string);
             }
@@ -35,30 +37,34 @@ public class Hierarchy {
     public Tree getTree(final String string) {
         if (!this.hierarchy.containsKey(string)) {
             ClassNode classNode = this.getClassNode(string);
-
-            this.buildHierarchy(classNode, null);
+            Tree tree = new Tree(classNode);
+            this.buildHierarchy(classNode, null, tree);
+            this.hierarchy.put(string, tree);
         }
         return this.hierarchy.get(string);
     }
 
-    public void buildHierarchy(final ClassNode classNode, final ClassNode subNode) {
-        if (this.hierarchy.get(classNode.name) == null) {
-            final Tree hierarchy = new Tree(classNode);
-            if (classNode.superName != null) {
-                hierarchy.getParentClasses().add(classNode.superName);
-                this.buildHierarchy(this.getClassNode(classNode.superName), classNode);
+    public void buildHierarchy(final ClassNode classNode, final ClassNode subNode, Tree tree) {
+        String className = classNode.name;
+
+            if (tree.getParentClasses().isEmpty()) {
+                if (classNode.superName != null) {
+                    tree.getParentClasses().add(classNode.superName);
+                    this.buildHierarchy(this.getClassNode(classNode.superName), classNode, tree);
+                }
+
+                if (classNode.interfaces != null) {
+                    for (String interfaceName : classNode.interfaces) {
+                        tree.getParentClasses().add(interfaceName);
+                        this.buildHierarchy(this.getClassNode(interfaceName), classNode, tree);
+                    }
+                }
             }
-            if (classNode.interfaces != null) {
-                classNode.interfaces.forEach(interfaces -> {
-                    hierarchy.getParentClasses().add(interfaces);
-                    this.buildHierarchy(this.getClassNode(interfaces), classNode);
-                });
+
+            if (subNode != null) {
+                tree.getSubClasses().add(subNode.name);
             }
-            this.hierarchy.put(classNode.name, hierarchy);
-        }
-        if (subNode != null) {
-            this.hierarchy.get(classNode.name).getSubClasses().add(subNode.name);
-        }
+
     }
 
     public static class Tree {

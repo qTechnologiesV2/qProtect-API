@@ -2,6 +2,7 @@ package dev.mdma.qprotect.api.transformer;
 
 import dev.mdma.qprotect.api.jar.JarFile;
 
+import dev.mdma.qprotect.api.utils.BytecodeUtils;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
@@ -15,7 +16,9 @@ public abstract class MethodTransformer extends ClassTransformer {
         boolean modified = false;
 
         for (MethodNode method : classNode.methods) {
-            modified |= runOnMethod(classNode, method, jarFile);
+            if (BytecodeUtils.isMethodSpaceLeft(method)) {
+                modified |= runOnMethod(classNode, method, jarFile);
+            }
         }
 
         return modified;
